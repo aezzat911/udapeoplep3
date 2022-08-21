@@ -44,16 +44,16 @@ commands:
               npm install
               npm run migrations:revert
             fi
-  install_ansible:
-    description: Install Ansible
-    steps:
-      - run:
-        name: Install Ansible on image  
-        command: |
-          sudo apt update
-          sudo apt install software-properties-common
-          sudo add-apt-repository --yes --update ppa:ansible/ansible
-          sudo apt install ansible
+  # install_ansible:
+  #   description: Install Ansible
+  #   steps:
+  #     - run:
+  #       name: Install Ansible on image  
+  #       command: |
+  #         sudo apt update
+  #         sudo apt install software-properties-common
+  #         sudo add-apt-repository --yes --update ppa:ansible/ansible
+  #         sudo apt install ansible
 
 
 # commands:
@@ -255,7 +255,7 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - install_ansible
+      
       # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints: ["7a:2b:f2:89:29:ce:85:83:02:ac:0c:6c:2e:39:a0:a5"]
@@ -264,8 +264,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            # Your code here
-            exit 1
+            sudo apt update
+            sudo apt install software-properties-common
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible  
       - run:
           name: Configure server
           command: |
