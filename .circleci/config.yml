@@ -25,7 +25,8 @@ commands:
     description: Revert the last migration if successfully run in the current workflow.
     parameters:
       # Add parameter here
-      id:
+      workflow_id:
+        default: "${CIRCLE_WORKFLOW_ID:0:7}"
         type: string
     steps:
       - run:
@@ -33,13 +34,13 @@ commands:
           # Add when this will run
           when: on_fail
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS=$(curl -H "token: << parameters.id >>" --request GET https://api.memstash.io/values/migration_<< parameters.id >>)
+            #Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
+            SUCCESS=$(curl -H "token: << parameters.workflow_id >>" --request GET https://api.memstash.io/values/migration_<< parameters.id >>)
             if(( $SUCCESS==1 ));
             then
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
+            cd ~/project/backend
+            npm install
+            #Add revert code here. You can find this in the Getting Started section.
               cd backend
               npm install
               npm run migrations:revert
@@ -231,17 +232,10 @@ jobs:
             --filters 'Name=tag:Name,Values=backend-*' \
             --query "Reservations[*].Instances[*].PublicIpAddress" \
             --output text)
-
-            cd .circleci/ansible/
-            aws ec2 describe-instances \
-            --filters 'Name=tag:Name,Values=backend-*' \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --region us-west-1 \
-            --output text >> inventory.txt
-            cat inventory.txt
+            echo $My_INSTANCE_IP >> .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
             
-            # BACKEND_IP=`cat ./inventory.txt | head -2 | tail -1`
-            # echo "BACKEND_IP: ${BACKEND_IP}"
+
 
       - persist_to_workspace:
           root: ~/
