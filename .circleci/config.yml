@@ -159,7 +159,7 @@ jobs:
       # Checkout code from git
       - checkout
       - run:
-          name: Install tar/gzip utility
+          name: Install tar/gzip in image
           command: |
             yum -y install tar gzip
       - run:
@@ -199,6 +199,9 @@ jobs:
             --region us-west-1 \
             --output text >> inventory.txt
             cat inventory.txt
+            
+            BACKEND_IP=`cat ./inventory.txt | head -2 | tail -1`
+            echo "BACKEND_IP: ${BACKEND_IP}"
 
       - persist_to_workspace:
           root: ~/
